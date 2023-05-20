@@ -4,6 +4,7 @@
     class="grid h-screen place-items-center"  
   >
     <div>
+      {{  userStore }}
       <img width="280" src="img/GmailLogin.png" alt="">
       <div class="flex justify-center">
         <GoogleLogin :callback="callback"/>
@@ -13,12 +14,10 @@
 </template>
 
 <script setup>
-import axios from 'axios'
+import {useUserStore} from '@/store/user-store'
+const userStore = useUserStore()
 const callback = async (response) => {
- let res = await axios.post('http://localhost:4001/api/google-login', {
-  token: response.credential
- })
- console.log(res)
+ await userStore.getUserDetailsFromGoogle(response)
 }
 </script>
 
