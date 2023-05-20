@@ -14,10 +14,15 @@
 </template>
 
 <script setup>
+import { useRouter} from 'vue-router'
 import {useUserStore} from '@/store/user-store'
+
+const router = useRouter()
 const userStore = useUserStore()
+
 const callback = async (response) => {
  await userStore.getUserDetailsFromGoogle(response)
+ setTimeout(() => { router.push('/email')}, 200)
 }
 </script>
 
