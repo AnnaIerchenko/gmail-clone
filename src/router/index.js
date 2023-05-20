@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import MessageView from '../views/MessageView.vue'
 import EmailView from '../views/template/EmailView.vue'
 const routes = [
   {
@@ -9,7 +10,11 @@ const routes = [
       {
         path: '',
         component: HomeView
-      }
+      },
+      {
+        path: 'message',
+        component: MessageView
+      },
     ]
   }
 ]

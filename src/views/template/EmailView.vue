@@ -66,6 +66,7 @@
         </div>
         <div class="my-5"></div>
 
+        <router-link to="/email">
         <div class="side-menu-item flex justify-between px-6 py-1.5 bg-blue-100 rounded-r-full">
           <div class="flex items-center">
             <Inbox :size="17"/>
@@ -77,7 +78,7 @@
             26
           </div>
         </div>
-
+      </router-link>
         <div class="flex justify-between px-6 py-1.5">
           <div class="flex items-center">
             <StarOutline :size="17"/>
