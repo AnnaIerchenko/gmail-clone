@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import { v4 as uuid} from 'uuid'
+import moment from 'moment'
 import { db } from "@/firebase-init";
 import { 
   collection, 
@@ -10,7 +11,8 @@ import {
   setDoc,
   doc,
   deleteDoc,
-  getDoc
+  getDoc,
+  orderBy,
 } from "firebase/firestore";
 
 axios.defaults.baseURL = 'http://localhost:4001/'
@@ -27,8 +29,9 @@ export const useUserStore = defineStore('user', {
   getEmailsByEmailAddress(){
     const q = query(
       collection(db, "emails"), 
-      where("toEmail", "==", this.$state.email));
-
+      where("toEmail", "==", this.$state.email),
+      orderBy('createdAt', 'desc')
+    ) 
     onSnapshot(q, (querySnapshot) => {
 
       const resultArray = [];
@@ -42,9 +45,9 @@ export const useUserStore = defineStore('user', {
             subject: doc.data().subject,
             body: doc.data().body,
             hasViewed: doc.data().hasViewed,
-            createdAt: doc.data().createdAt,
+            createdAt: moment(doc.data().createdAt).format("MMM D HH:mm"),
           });
-      });
+      })
      this.$state.emails = resultArray
     },
       (error) => {
@@ -90,6 +93,16 @@ export const useUserStore = defineStore('user', {
       console.log('No such document')
     }
   },
+
+  async emailHasBeenViewed(id) {
+    try{
+      await setDoc(doc(db, "emails/" + id), {
+        hasViewed: true
+      }, {merge: true})
+    } catch(error) {
+      console.log(error)
+    }
+  },
   async deleteEmail(id){
     try{
       await deleteDoc(doc(db, "emails", id))
@@ -115,6 +128,7 @@ export const useUserStore = defineStore('user', {
       this.$state.picture = null
       this.$state.firstName = null
       this.$state.lastName = null
+      this.$state.email = []
     }
   },
   persist: true,

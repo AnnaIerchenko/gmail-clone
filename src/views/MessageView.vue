@@ -59,7 +59,9 @@
   import { onMounted } from 'vue';
   import { useUserStore } from '@/store/user-store';
   import { useRouter, useRoute } from 'vue-router';
-import { ref } from 'vue';
+  import { ref } from 'vue';
+  import moment from 'moment'
+
   const userStore = useUserStore()
   const router = useRouter()
   const route = useRoute()
@@ -68,10 +70,12 @@ import { ref } from 'vue';
 
   onMounted(async() => {
    const res = await userStore.getEmailById(route.params.id)
+   await userStore.emailHasBeenViewed(res.id)
+
    email.value = {
     id: res.id,
-    body: ref.body,
-    createdAt: res.createdAt,
+    body: res.body,
+    createdAt: moment(res.createdAt).format("MMM D HH:mm"),
     firstName: res.firstName,
     lastName: res.lastName,
     fromEmail: res.fromEmail,
