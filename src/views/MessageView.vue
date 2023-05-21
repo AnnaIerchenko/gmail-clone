@@ -17,6 +17,7 @@
           </router-link>
 
           <IconComponent
+              @click="deleteEmail(email.id)"
               iconString="trash"
               iconColor="#636363"
               :iconSize="19"
@@ -30,7 +31,7 @@
     </div>
      
     <div class="w-full text-xl ml-20 font-light-pt-5">
-      Subject
+      {{ email.subject }}
     </div>
 
     <div class="w-full flex">
@@ -42,18 +43,12 @@
       <div class="w-full my-4 mx-0.5">
         <div class="font-semibold text-sm mt-4 mb-4">
           <div class="w-full flex justify-between items-center">
-            <div>john.doe@mail.com</div>
-            <div class="mr-5 text-xs font-normal">Jun 20 15:15</div>
+            <div>{{ email.fromEmail }}</div>
+            <div class="mr-5 text-xs font-normal">{{ email.createdAt }}</div>
           </div>
           <span class="text-xs text-gray-500 font-normal">to me</span>
         </div>
-        <div>
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Explicabo, asperiores!
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Explicabo, asperiores!
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Explicabo, asperiores!
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Explicabo, asperiores!
-
-        </div>
+        <div>{{ email.body }}</div>
       </div>
     </div>
   </div>
@@ -61,6 +56,39 @@
 
 <script setup>
   import IconComponent from '@/components/IconComponent.vue'
+  import { onMounted } from 'vue';
+  import { useUserStore } from '@/store/user-store';
+  import { useRouter, useRoute } from 'vue-router';
+import { ref } from 'vue';
+  const userStore = useUserStore()
+  const router = useRouter()
+  const route = useRoute()
+
+  let email = ref({})
+
+  onMounted(async() => {
+   const res = await userStore.getEmailById(route.params.id)
+   email.value = {
+    id: res.id,
+    body: ref.body,
+    createdAt: res.createdAt,
+    firstName: res.firstName,
+    lastName: res.lastName,
+    fromEmail: res.fromEmail,
+    subject: res.subject,
+    hasViewed: res.hasViewed,
+    toEmail: res.toEmail
+   }
+  })
+
+  const deleteEmail = async (id) => {
+    let res = confirm("Are you sure you want to delete this?")
+    if(res){
+     await userStore.deleteEmail(id)
+     setTimeout(() => {router.push('/email') }, 200)
+    }
+  }
+
 </script>
 <style lang="scss">
   #SingleMessageSection {
