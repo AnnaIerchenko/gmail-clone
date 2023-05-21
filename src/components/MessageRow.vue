@@ -6,7 +6,11 @@
     >
       <div class="flex items-center px-4 py-2">
         <div class="flex items-center">
-          <component :is="CheckboxMarkedOutline" :size="19" fillColor="#636363"
+          <component 
+            :is="isSelected ? CheckboxMarkedOutline : CheckboxBlankOutline" 
+            @click="isSelected = !isSelected"
+            :size="19" 
+            fillColor="#636363"
           />
           <StarOutline 
             :size="19"
@@ -44,9 +48,13 @@
 </template>
 
 <script setup>
-import { toRefs, defineProps} from 'vue'
+import { toRefs, defineProps, defineEmits, ref, watch} from 'vue'
 import CheckboxMarkedOutline from 'vue-material-design-icons/CheckboxMarkedOutline.vue'
+import CheckboxBlankOutline from 'vue-material-design-icons/CheckboxBlankOutline.vue'
 import StarOutline from 'vue-material-design-icons/StarOutline.vue'
+
+const emit = defineEmits('selectedId')
+let isSelected = ref(false)
 
 const props = defineProps({
   id: String,
@@ -57,6 +65,10 @@ const props = defineProps({
   hasViewed: Boolean,
 })
 const {id, from, subject, body, time, hasViewed} = toRefs(props)
+
+watch(isSelected, (bool) => {
+  emit('selectedId', {id: id.value, bool: bool})
+})
 </script>
 
 <style lang="scss">
