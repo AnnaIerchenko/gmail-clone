@@ -148,19 +148,24 @@
       <div>
         <div class="relative flex items-center px-3.5 py-2">
           <div class="text-sm text-gray-700">To</div>
-          <input class="w-full h-6 border-transparent border-none focus:ring-0 outline-none" type="text"/>
+          <input 
+            v-model="toEmail"
+            class="w-full h-6 border-transparent border-none focus:ring-0 outline-none" type="text"/>
           <div class="absolute border-b w-[calc(100%-30px)] bottom-8"></div>
         </div>
 
         <div class="relative flex items-center px-3.5 py-2">
           <div class="text-sm text-gray-700">Subject</div>
-          <input class="w-full h-6 border-transparent border-none focus:ring-0 outline-none" type="text"/>
+          <input 
+            v-model="subject"
+            class="w-full h-6 border-transparent border-none focus:ring-0 outline-none" type="text"/>
           <div class="absolute border-b w-[calc(100%-30px)] bottom-8"></div>
         </div>
       </div>
 
       <div class="m-3">
         <textarea 
+          v-model="body"
           style="resize:none"
           class="w-full border-transparent border-none focus:ring-0 outline-none"
           rows="14"></textarea>
@@ -168,6 +173,7 @@
 
       <div class="p-4 mt-5">
         <button
+          @click="sendEmail"
           class="bg-blue-700 hover:bg-blue-600 text-white text-sm font-bold py-2 px-4 rounded-full"
         >Send Message</button>
       </div>
@@ -188,7 +194,26 @@ import FileOutline from 'vue-material-design-icons/FileOutline.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import Close from 'vue-material-design-icons/Close.vue'
 
+import { useUserStore } from '@/store/user-store'
+const userStore = useUserStore()
+
 let newMessageOpen = ref(false)
+let toEmail = ref('')
+let subject = ref('')
+let body = ref('')
+
+const sendEmail = async () => {
+  await userStore.sendEmail({
+    toEmail: toEmail.value,
+    subject: subject.value,
+    body: body.value,
+  })
+
+ newMessageOpen.value = false
+ toEmail.value = ''
+ subject.value = ''
+ body.value = ''
+}
 </script>
 
 <style lang="scss">
