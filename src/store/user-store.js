@@ -1,5 +1,12 @@
 import { defineStore } from "pinia";
 import axios from "axios";
+import { db } from "@/firebase-init";
+import { 
+  collection, 
+  query, 
+  where, 
+  onSnapshot 
+} from "firebase/firestore";
 
 axios.defaults.baseURL = 'http://localhost:4001/'
 export const useUserStore = defineStore('user', {
@@ -12,6 +19,34 @@ export const useUserStore = defineStore('user', {
     emails: []
   }),
   actions: {
+  getEmailsByEmailAddress(){
+    const q = query(
+      collection(db, "emails"), 
+      where("toEmail", "==", "joedoe@mail.com"));
+      
+    onSnapshot(q, (querySnapshot) => {
+
+      const resultArray = [];
+      querySnapshot.forEach((doc) => {
+          resultArray.push({
+            id: doc.id,
+            firstName: doc.data().firstName,
+            lastName: doc.data().lastName,
+            fromEmail: doc.data().fromEmail,
+            toEmail: doc.data().toEmail,
+            subject: doc.data().subject,
+            body: doc.data().body,
+            hasViewed: doc.data().hasViewed,
+            createdAt: doc.data().createdAt,
+          });
+      });
+     this.$state.emails = resultArray
+    },
+      (error) => {
+        console.log(error)
+      }    
+    );
+},
     async getUserDetailsFromGoogle(data){
       let res = await axios.post('api/google-login', {
         token: data.credential
